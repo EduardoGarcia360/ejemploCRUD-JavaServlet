@@ -17,6 +17,17 @@
     </head>
     <body>
         <h1>Listado de Pacientes</h1>
+        <table>
+            <tbody>
+                <tr>
+                    <td>
+                        <a href="Slt_paciente?accion=nuevo">
+                            <img src="img/add_icon.png" width="30" title="Nuevo">
+                        </a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
         <table border="1" class="table table-striped table-bordered">
             <thead>
                 <tr>
@@ -41,7 +52,7 @@
                             <td><%= p.getGenero()%></td>
                             <td><%= p.getTipo_de_sangre()%></td>
                             <td>
-                                <a href="Slt_paciente?accion=editar&codigo=<%= p.getCodigo()%>">
+                                <a href="Slt_paciente?accion=consultar&codigo=<%= p.getCodigo()%>">
                                     <img src="img/edit_icon.png" width="30" title="Editar">
                                 </a>
                             </td>

@@ -41,8 +41,12 @@ public class Slt_paciente extends HttpServlet {
         Connection cnx = Conexion.getConexion();
         if (accion.equals("listar")) {
             this.listPaciente(cnx, request, response);
-        } else if (accion.equals("editar")) {
-            this.editPaciente(cnx, request, response);
+        } else if (accion.equals("consultar")) {
+            this.selectPaciente(cnx, request, response);
+        } else if (accion.equals("nuevo")) {
+            this.newPaciente(cnx, request, response);
+        } else if (accion.equals("insertar")) {
+            this.addPaciente(cnx, request, response);
         }
     }
     
@@ -69,7 +73,7 @@ public class Slt_paciente extends HttpServlet {
         }
     }
     
-    private void editPaciente (Connection cnx, HttpServletRequest request, HttpServletResponse response)
+    private void selectPaciente (Connection cnx, HttpServletRequest request, HttpServletResponse response)
         throws ServletException, IOException {
         try {
             //se obtienen los parametros
@@ -80,6 +84,7 @@ public class Slt_paciente extends HttpServlet {
             PreparedStatement sta = cnx.prepareCall(sb.toString());
             //se sustituyen los valores para los parametros
             sta.setString(1, codigo);
+            //se ejecuta el spr con los parametros
             ResultSet rs = sta.executeQuery();
             ArrayList<Paciente> lista = new ArrayList<>();
             while (rs.next()) {
@@ -92,8 +97,52 @@ public class Slt_paciente extends HttpServlet {
                 );
                 lista.add(p);
             }
-            request.setAttribute("editar", lista);
+            request.setAttribute("gestion", lista);
             request.getRequestDispatcher("Pages/Paciente/gestion.jsp").forward(request, response);
+        }catch(Exception e) {
+            this.defaultError(e, response);
+        }
+    }
+    
+    private void newPaciente (Connection cnx, HttpServletRequest request, HttpServletResponse response) 
+        throws ServletException, IOException {
+        try {
+            ArrayList<Paciente> lista = new ArrayList<>();
+            //al ser nuevo se genera un objeto vacio
+            Paciente p = new Paciente(0, "", "", "", "");
+            lista.add(p);
+            request.setAttribute("gestion", lista);
+            request.getRequestDispatcher("Pages/Paciente/gestion.jsp").forward(request, response);
+        }catch(Exception e) {
+            this.defaultError(e, response);
+        }
+    }
+    
+    private void addPaciente (Connection cnx, HttpServletRequest request, HttpServletResponse response)
+        throws ServletException, IOException {
+        try {
+            //se obtienen los parametros
+            int codigo = Integer.parseInt(request.getParameter("txtCodigo"));
+            String nombre = request.getParameter("txtNombre");
+            String direccion = request.getParameter("txtDireccion");
+            String genero = request.getParameter("txtGenero");
+            String tipoSangre = request.getParameter("txtTipo");
+            //se crean las conexiones para el spr
+            StringBuilder sb = new StringBuilder();
+            sb.append("{call SPR_INS_PACIENTE(?, ?, ?, ?, ?)}");
+            PreparedStatement sta = cnx.prepareCall(sb.toString());
+            //se sustituyen los valores para los parametros
+            //en el mismo orden del stored procedure
+            sta.setInt(1, codigo);
+            sta.setString(2, nombre);
+            sta.setString(3, direccion);
+            sta.setString(4, genero);
+            sta.setString(5, tipoSangre);
+            //se ejecuta el spr con los parametros
+            sta.executeUpdate();
+            
+            //se redirige a la pagina de index
+            this.listPaciente(cnx, request, response);
         }catch(Exception e) {
             this.defaultError(e, response);
         }
@@ -114,7 +163,7 @@ public class Slt_paciente extends HttpServlet {
             out.println("</html>");
         }
     }
-
+    
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
      * Handles the HTTP <code>GET</code> method.
