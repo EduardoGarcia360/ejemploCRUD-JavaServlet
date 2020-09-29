@@ -47,6 +47,10 @@ public class Slt_paciente extends HttpServlet {
             this.newPaciente(cnx, request, response);
         } else if (accion.equals("insertar")) {
             this.addPaciente(cnx, request, response);
+        } else if (accion.equals("actualizar")) {
+            this.updatePaciente(cnx, request, response);
+        } else if (accion.equals("eliminar")) {
+            this.deletePaciente(cnx, request, response);
         }
     }
     
@@ -142,6 +146,63 @@ public class Slt_paciente extends HttpServlet {
             sta.executeUpdate();
             
             //se redirige a la pagina de index
+            this.listPaciente(cnx, request, response);
+        }catch(Exception e) {
+            this.defaultError(e, response);
+        }
+    }
+    
+    private void updatePaciente (Connection cnx, HttpServletRequest request, HttpServletResponse response)
+        throws ServletException, IOException {
+        try {
+            //se obtienen los parametros
+            int codigo = Integer.parseInt(request.getParameter("txtCodigo"));
+            String nombre = request.getParameter("txtNombre");
+            String direccion = request.getParameter("txtDireccion");
+            String genero = request.getParameter("txtGenero");
+            String tipoSangre = request.getParameter("txtTipo");
+            
+            //se crean las conexiones para el spr
+            StringBuilder sb = new StringBuilder();
+            sb.append("{call SPR_UPD_PACIENTE(?, ?, ?, ?, ?)}");
+            PreparedStatement sta = cnx.prepareCall(sb.toString());
+            
+            //se sustituyen los valores para los parametros
+            //en el mismo orden del stored procedure
+            sta.setInt(1, codigo);
+            sta.setString(2, nombre);
+            sta.setString(3, direccion);
+            sta.setString(4, genero);
+            sta.setString(5, tipoSangre);
+            
+            //se ejecuta el spr con los parametros
+            sta.executeUpdate();
+            
+            //se redirige a la pagina de index
+            this.listPaciente(cnx, request, response);
+        }catch(Exception e) {
+            this.defaultError(e, response);
+        }
+    }
+    
+    private void deletePaciente (Connection cnx, HttpServletRequest request, HttpServletResponse response) 
+        throws ServletException, IOException {
+        try {
+            //se obtienen los parametros
+            int codigo = Integer.parseInt(request.getParameter("codigo"));
+            
+            //se crean las conexiones para el spr
+            StringBuilder sb = new StringBuilder();
+            sb.append("{call SPR_DEL_PACIENTE(?)}");
+            PreparedStatement sta = cnx.prepareCall(sb.toString());
+            
+            //se sustituyen los valores para los parametros
+            sta.setInt(1, codigo);
+            
+            //se ejecuta el spr con los parametros
+            sta.executeUpdate();
+            
+            //se vuelve a cargar la pagina del index
             this.listPaciente(cnx, request, response);
         }catch(Exception e) {
             this.defaultError(e, response);

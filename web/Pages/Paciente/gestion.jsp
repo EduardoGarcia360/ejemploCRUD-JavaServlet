@@ -72,6 +72,7 @@
                             <td></td>
                             <td>
                                 <input type="submit" name="btnGuardar" value="Actualizar Paciente">
+                                <input type="hidden" name="accion" value="actualizar">
                             </td>
                         </tr>
                         <%
