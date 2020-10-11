@@ -216,15 +216,15 @@ public class Slt_paciente extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet ServletMant</title>");            
+            out.println("<title>Servlet Error</title>");            
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet ServletMant at " + e.getMessage() + "</h1>");
+            out.println("<h1>Error retornado: " + e.getMessage() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
     }
-    
+
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
      * Handles the HTTP <code>GET</code> method.
